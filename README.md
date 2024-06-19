@@ -1,3 +1,3 @@
 # Recipe-Sharing-Platform
 
-Platform to share recepies and meal plans
+Platform to share recipes and meal plans
