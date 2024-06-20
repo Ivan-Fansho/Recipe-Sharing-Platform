@@ -1,46 +1,38 @@
-"""
+import os
+from sqlalchemy import create_engine, MetaData
+from sqlalchemy.orm import sessionmaker
+import psycopg2  # for reqs file
+from sqlalchemy.sql import text
 
-Users Table:
+# Database configuration from environment variables
+db_username = os.getenv("DB_USERNAME", "postgres")
+db_password = os.getenv("DB_PASSWORD", "master")
+db_url = os.getenv("DB_URL", "127.0.0.1:5432")
+db_name = os.getenv("DB_NAME", "recipe_db")
 
-    id (Primary Key)
-    username
-    email
-    password
-    profile_picture
-    bio
-    is_admin
+def create_database_if_not_exists():
+    conn = psycopg2.connect(
+        dbname='postgres',
+        user=db_username,
+        password=db_password,
+        host=db_url.split(':')[0],
+        port=db_url.split(':')[1]
+    )
+    conn.autocommit = True  # Ensure autocommit is enabled
+    cursor = conn.cursor()
+    cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = '{db_name}'")
+    exists = cursor.fetchone()
+    if not exists:
+        cursor.execute(f"CREATE DATABASE {db_name}")
+    cursor.close()
+    conn.close()
+        
+create_database_if_not_exists()
 
-Recipes Table:
+# Connection string for the actual database
+connectionString = f"postgresql+psycopg2://{db_username}:{db_password}@{db_url}/{db_name}"
 
-    id (Primary Key)
-    user_id (Foreign Key)
-    title
-    ingredients
-    steps
-    category
-    photo
-    created_at
-    updated_at
-
-Ratings Table:
-
-    id (Primary Key)
-    recipe_id (Foreign Key)
-    user_id (Foreign Key)
-    rating
-
-Comments Table:
-
-    id (Primary Key)
-    recipe_id (Foreign Key)
-    user_id (Foreign Key)
-    comment
-    created_at
-
-Favorites Table:
-
-    id (Primary Key)
-    user_id (Foreign Key)
-    recipe_id (Foreign Key)
-
-"""
+# SQLAlchemy setup
+engine = create_engine(connectionString, echo=False)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+metadata = MetaData()
