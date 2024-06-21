@@ -14,9 +14,10 @@ class User(Base):
     username = Column(String(50), unique=True, nullable=False)
     email = Column(String(100), unique=True, nullable=False)
     password = Column(String(200), nullable=False)
-    profile_picture = Column(String(200), nullable=True)
+    profile_picture = Column(String(200), default=False, nullable=True)
     bio = Column(Text, nullable=True)
     is_admin = Column(Boolean, default=False, nullable=False)
+    is_restricted = Column(Boolean, default=False, nullable=False)
 
 
 class Recipe(Base):
@@ -58,7 +59,7 @@ class Comment(Base):
     recipe_id = Column(Integer, ForeignKey('recipes.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     comment = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.datetime.now(datetime.UTC))
 
     recipe = relationship("Recipe", back_populates="comments")
     user = relationship("User", back_populates="comments")
