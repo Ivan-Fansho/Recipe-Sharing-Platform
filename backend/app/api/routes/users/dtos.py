@@ -10,8 +10,6 @@ class UserDTO(BaseModel):
     username: str
     password: str
     email: str
-    phone_number: str
-    fullname: str
 
     @field_validator("username")
     def validate_username(cls, v):
@@ -36,18 +34,6 @@ class UserDTO(BaseModel):
             raise EmailValidationError("Pleas input a valid email address")
         return e
 
-
-    @field_validator("phone_number")
-    def validate_phone_number(cls, p):
-        if len(p) != 10 or not p.isdigit():
-            raise PhoneNumberValidationError("Must be a valid phone number with exactly 10 digits")
-        return p
-
-    @field_validator("fullname")
-    def validate_fullname(cls, f):
-        if len(f) > 30 or not re.match(r"^[a-zA-Z0-9\s]+$", f):
-            raise FullNameValidationError("fyll name must be no more than 50 characters and contain only alphanumeric characters")
-        return f
 
 
 
@@ -85,12 +71,6 @@ class UpdateUserDTO(BaseModel):
             raise EmailValidationError('Pleas input a valid email address')
         return e
 
-
-    @field_validator('phone_number')
-    def validate_phone_number(cls, p):
-        if len(p) != 10:
-            raise PhoneNumberValidationError('Must be a valid phone number with 10 digits')
-        return p
 
     @field_validator("fullname")
     def validate_fullname(cls, f):

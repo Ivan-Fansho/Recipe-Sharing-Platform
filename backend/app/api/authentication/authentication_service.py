@@ -1,7 +1,7 @@
 from datetime import timedelta, datetime, timezone
 from hashlib import sha256
 from typing import Annotated, Set
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException, Depends, Cookie, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from sqlalchemy.orm import Session
@@ -69,6 +69,29 @@ def from_token(session: Session, token: str) -> UserViewDTO | None:
         return UserViewDTO.from_query_result(user.id, user.username)
     except NoResultFound:
         return None
+
+def get_token_from_cookie(access_token: str = Cookie(None)):
+    if access_token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return access_token
+
+
+def get_current_user(token: str = Depends(get_token_from_cookie), db: Session = Depends(get_db)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+
+        stmt = select(User).where(User.username == username)
+        user = db.execute(stmt).scalar_one( )
+        return UserViewDTO.from_query_result(user.id, user.username)
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
 
 def get_user_or_raise_401(

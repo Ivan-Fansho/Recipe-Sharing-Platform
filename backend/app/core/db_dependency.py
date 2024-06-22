@@ -1,9 +1,6 @@
-from contextlib import contextmanager
-
+from sqlalchemy.orm import Session
 from backend.app.core.database import SessionLocal
 
-
-@contextmanager
 def get_db():
     db = SessionLocal()
     try:
