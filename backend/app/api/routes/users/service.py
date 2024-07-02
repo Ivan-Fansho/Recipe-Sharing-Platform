@@ -5,60 +5,12 @@ from backend.app.core.models import User
 from .dtos import UserDTO, UpdateUserDTO, UserShowDTO, UserFromSearchDTO, ContactDTO
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from fastapi import HTTPException, Depends
-from mailjet_rest import Client
+from backend.app.api.utils import custom_emails
 
 from ...authentication.authentication_service import hash_pass
 
 logger = logging.getLogger(__name__)
-# def registration_email_sender(user):
-#     api_key = 'cdcb4ffb9ac758e8750f5cf5bf07ac9f'
-#     api_secret = '8ec6183bbee615d0d62b2c72bee814c4'
-#     mailjet = Client(auth=(api_key, api_secret), version='v3.1')
-#     data = {
-#         'Messages': [
-#             {
-#                 "From": {
-#                     "Email": "kis.team.telerik@gmail.com",
-#                     "Name": "MyPyWallet"
-#                 },
-#                 "To": [
-#                     {
-#                         "Email": f"{user.email}",
-#                         "Name": f"{user.fullname}"
-#                     }
-#                 ],
-#                 "Subject": f"Registration to PyMyWallet",
-#                 "HTMLPart": f"<h3>Thanks for registering, please wait for your registration to be confirmed.</h3><br />May the delivery force be with you!",
-#                 "CustomID": f"UserID: {user.id}"
-#             }
-#         ]
-#     }
-#     mailjet.send.create(data=data)
-#
-# def email_sender(user):
-#     api_key = 'cdcb4ffb9ac758e8750f5cf5bf07ac9f'
-#     api_secret = '8ec6183bbee615d0d62b2c72bee814c4'
-#     mailjet = Client(auth=(api_key, api_secret), version='v3.1')
-#     data = {
-#         'Messages': [
-#             {
-#                 "From": {
-#                     "Email": "kis.team.telerik@gmail.com",
-#                     "Name": "MyPyWallet Admin"
-#                 },
-#                 "To": [
-#                     {
-#                         "Email": "kis.team.telerik@gmail.com",
-#                         "Name": "Kis"
-#                     }
-#                 ],
-#                 "Subject": f"New Registration UserID:{user.id}",
-#                 "HTMLPart": f"<h3>New user {user.username} with id:{user.id} waits for confirmation</h3><br />May the delivery force be with you!",
-#                 "CustomID": "AppGettingStartedTest"
-#             }
-#         ]
-#     }
-#     mailjet.send.create(data=data)
+
 
 
 
@@ -74,8 +26,8 @@ def create(user: UserDTO, db: Session):
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        # email_sender(new_user)
-        # registration_email_sender(new_user)
+        custom_emails.registration_email_sender(new_user)
+        custom_emails.registration_email_sender_to_admin(new_user)
         return new_user
     except IntegrityError as e:
         logger.error(f"Integrity error during user creation: {e}")
@@ -112,12 +64,14 @@ def update_user(id, update_info: UpdateUserDTO, db: Session = Depends(get_db)):
         # Update the user's attributes
         if update_info.password:
             user.password = hash_pass(update_info.password)
+            custom_emails.update_password_email_sender(user,update_info.password,  user.email)
         if update_info.email:
             user.email = update_info.email
-        if update_info.phone_number:
-            user.phone_number = update_info.phone_number
-        if update_info.fullname:
-            user.fullname = update_info.fullname
+        if update_info.bio:
+            user.bio = update_info.bio
+        if update_info.photo:
+            user.photo = update_info.photo
+
 
         # Commit the changes to the database
         db.commit()
@@ -127,11 +81,7 @@ def update_user(id, update_info: UpdateUserDTO, db: Session = Depends(get_db)):
     except IntegrityError as e:
         logger.error(f"Integrity error during user creation: {e}")
         db.rollback()
-        if "phone_number" in str(e.orig):
-            raise HTTPException(
-                status_code=400, detail="Phone number already exists"
-            ) from e
-        elif "username" in str(e.orig):
+        if "username" in str(e.orig):
             raise HTTPException(
                 status_code=400, detail="Username already exists"
             ) from e

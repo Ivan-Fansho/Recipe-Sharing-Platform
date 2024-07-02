@@ -1,4 +1,5 @@
 from datetime import timedelta
+from typing import Annotated
 
 from fastapi import APIRouter, Request, HTTPException, status, Depends, Body, Response
 from fastapi.responses import RedirectResponse, JSONResponse
@@ -8,7 +9,7 @@ from starlette import schemas
 from backend.app.api.authentication.authentication_service import ACCESS_TOKEN_EXPIRE_MINUTES, create_token, \
     authenticate_user, get_current_user
 from backend.app.api.routes.users import service
-from backend.app.api.routes.users.dtos import UserViewDTO, UserDTO
+from backend.app.api.routes.users.dtos import UserViewDTO, UserDTO, UpdateUserDTO
 
 from backend.app.core.db_dependency import get_db
 
@@ -63,3 +64,26 @@ def read_users_me(current_user: UserViewDTO = Depends(get_current_user)):
 def logout(response: Response):
     response.delete_cookie(key="access_token")
     return {"message": "Logout successful"}
+
+
+@user_router.put("/update")
+def update_user(
+    current_user: UserViewDTO = Depends(get_current_user),
+        update_info: UpdateUserDTO = Body(
+            ...,
+            example={
+                "password": "Password1!",
+                "email": "default@example.com",
+                "photo_path": "photo.jpeg/photo_path",
+                "bio": "This is the bio",
+
+            },
+        ),
+    db: Session = Depends(get_db),
+):
+    user = service.update_user(current_user.id, update_info, db)
+
+    return JSONResponse(
+        status_code=status.HTTP_200_OK,
+        content={"message": "Profile updated successfully"
+                 })
