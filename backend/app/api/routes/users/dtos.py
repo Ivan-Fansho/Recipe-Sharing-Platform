@@ -46,11 +46,10 @@ class UserViewDTO(BaseModel):
         return cls(id=id, username=username)
 
 class UpdateUserDTO(BaseModel):
-    password: str | None = None
     email: str | None = None
-    phone_number: str | None = None
+    password: str | None = None
     photo: str | None = None
-    fullname: str | None = None
+    bio: str | None = None
 
 
     @field_validator('password')
@@ -72,11 +71,6 @@ class UpdateUserDTO(BaseModel):
         return e
 
 
-    @field_validator("fullname")
-    def validate_fullname(cls, f):
-        if len(f) > 30 or not re.match(r"^[a-zA-Z0-9\s]+$", f):
-            raise FullNameValidationError("fyll name must be no more than 50 characters and contain only alphanumeric characters")
-        return f
 
 
 class UserShowDTO(BaseModel):
