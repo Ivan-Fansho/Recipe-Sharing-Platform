@@ -17,7 +17,7 @@ recipe_router = APIRouter(prefix="/recipes", tags=["Recipes"])
 @recipe_router.post("create")
 def create_recipe(current_user: UserViewDTO = Depends(get_current_user),
         recipe: RecipeDTO = Body(..., example={
-        "Title": "Peperoni Pizza",
+        "title": "Peperoni Pizza",
         "ingredients": "Dough, tomato souse, mozzarella, peperoni",
         "steps": "1.stretch the dough 2.put on the tomato souse, 3.spread the mozzarella 4.pot on the peperoni",
         "category": "pizzas",
