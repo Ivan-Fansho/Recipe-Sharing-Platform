@@ -1,4 +1,3 @@
-from decimal import Decimal
 import re
 from pydantic import BaseModel, field_validator
 
@@ -75,7 +74,6 @@ class UpdateUserDTO(BaseModel):
 
 class UserShowDTO(BaseModel):
     username: str
-    balance: Decimal
     password: str
     email: str
     phone_number: str
