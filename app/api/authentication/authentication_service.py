@@ -8,9 +8,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound
 
-from backend.app.api.routes.users.dtos import UserViewDTO
-from backend.app.core.db_dependency import get_db
-from backend.app.core.models import User
+from app.api.routes.users.dtos import UserViewDTO
+from app.core.db_dependency import get_db
+from app.core.models import User
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"

@@ -1,17 +1,15 @@
 from datetime import timedelta
-from typing import Annotated
 
-from fastapi import APIRouter, Request, HTTPException, status, Depends, Body, Response
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi import APIRouter, HTTPException, status, Depends, Body, Response
+from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from starlette import schemas
-from backend.app.api.authentication.authentication_service import ACCESS_TOKEN_EXPIRE_MINUTES, create_token, \
+from app.api.authentication.authentication_service import ACCESS_TOKEN_EXPIRE_MINUTES, create_token, \
     authenticate_user, get_current_user
-from backend.app.api.routes.users import service
-from backend.app.api.routes.users.dtos import UserViewDTO, UserDTO, UpdateUserDTO
+from app.api.routes.users import service
+from app.api.routes.users.dtos import UserViewDTO, UserDTO, UpdateUserDTO
 
-from backend.app.core.db_dependency import get_db
+from app.core.db_dependency import get_db
 
 user_router = APIRouter(prefix="/users", tags=["Users"])
 
