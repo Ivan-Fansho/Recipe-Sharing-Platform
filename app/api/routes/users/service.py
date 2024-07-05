@@ -1,11 +1,11 @@
 import logging
 from sqlalchemy.orm import Session
-from backend.app.core.db_dependency import get_db
-from backend.app.core.models import User
-from .dtos import UserDTO, UpdateUserDTO, UserShowDTO, UserFromSearchDTO, ContactDTO
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from app.core.db_dependency import get_db
+from app.core.models import User
+from .dtos import UserDTO, UpdateUserDTO
+from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, Depends
-from backend.app.api.utils import custom_emails
+from ...utils import custom_emails
 
 from ...authentication.authentication_service import hash_pass
 
@@ -64,7 +64,7 @@ def update_user(id, update_info: UpdateUserDTO, db: Session = Depends(get_db)):
         # Update the user's attributes
         if update_info.password:
             user.password = hash_pass(update_info.password)
-            custom_emails.update_password_email_sender(user,update_info.password,  user.email)
+            custom_emails.update_password_email_sender(user, update_info.password, user.email)
         if update_info.email:
             user.email = update_info.email
         if update_info.bio:

@@ -1,18 +1,13 @@
 from contextlib import asynccontextmanager
 
 import uvicorn
-from dotenv import load_dotenv
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.openapi.utils import get_openapi
-from api.routes.users.router import user_router
-from backend.app.core import models
-from backend.app.core.database import engine
-from backend.app.core.db_dependency import get_db
-from backend.app.core.db_population import initialize_special_accounts
-from backend.app.core.models import Base
-import os
-from fastapi.openapi.docs import get_swagger_ui_html
+from app.core import models
+from app.core.database import engine
+from app.core.db_dependency import get_db
+from app.core.db_population import initialize_special_accounts
+from app.core.models import Base
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

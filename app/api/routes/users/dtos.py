@@ -2,8 +2,8 @@ from decimal import Decimal
 import re
 from pydantic import BaseModel, field_validator
 
-from backend.app.api.utils.validation_errors import UsernameValidationError, PasswordValidationError, \
-    EmailValidationError, PhoneNumberValidationError, FullNameValidationError
+from app.api.utils.validation_errors import UsernameValidationError, PasswordValidationError, \
+    EmailValidationError
 
 
 class UserDTO(BaseModel):
