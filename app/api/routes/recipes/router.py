@@ -19,7 +19,7 @@ def create_recipe(current_user: UserViewDTO = Depends(get_current_user),
         recipe: RecipeDTO = Body(..., example={
         "title": "Peperoni Pizza",
         "ingredients": "Dough, tomato souse, mozzarella, peperoni",
-        "steps": "1.stretch the dough 2.put on the tomato souse, 3.spread the mozzarella 4.pot on the peperoni",
+        "steps": "1.stretch the dough 2.put on the tomato souse, 3.spread the mozzarella 4.put on the peperoni",
         "category": "pizzas",
         "photo": "photo.jpeg/photo_path",
     }),
