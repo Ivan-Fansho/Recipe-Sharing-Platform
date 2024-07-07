@@ -1,0 +1,1 @@
+categories = {"Pizzas", "Soups", "Deserts", "Breakfast", "Main Course", "Appetizers", "Beverages", "Salads", "Sandwiches"}

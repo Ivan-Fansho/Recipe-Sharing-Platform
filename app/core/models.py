@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, date
+
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker, Mapped, mapped_column
 from sqlalchemy import (
-    String, Integer, Boolean, Text, ForeignKey, DateTime, create_engine, Column
+    String, Integer, Boolean, Text, ForeignKey, DateTime, create_engine, Column, Date
 )
 from sqlalchemy.ext.declarative import declared_attr
 
@@ -35,8 +36,8 @@ class Recipe(Base):
     steps: Mapped[Text] = mapped_column(Text, nullable=False)
     category: Mapped[str] = mapped_column(String(50), nullable=False)
     photo: Mapped[str] = mapped_column(String(200), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(Date, default=date.today)
+    updated_at: Mapped[datetime] = mapped_column(Date, default=date.today, onupdate=date.today)
 
     user: Mapped[User] = relationship("User", back_populates="recipes")
     ratings: Mapped[list['Rating']] = relationship("Rating", back_populates="recipe")
