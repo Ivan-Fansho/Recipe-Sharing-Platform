@@ -72,20 +72,3 @@ class UpdateUserDTO(BaseModel):
 
 
 
-class UserShowDTO(BaseModel):
-    username: str
-    password: str
-    email: str
-    phone_number: str
-    fullname: str
-
-class UserFromSearchDTO(BaseModel):
-    username: str
-    email: str
-
-class ContactDTO(BaseModel):
-    username: str
-
-    @classmethod
-    def from_query_result(cls, username):
-        return cls(username=username)

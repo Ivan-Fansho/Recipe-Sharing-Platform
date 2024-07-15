@@ -14,7 +14,7 @@ from app.core.models import User
 
 SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 360
+ACCESS_TOKEN_EXPIRE_MINUTES = 720
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
@@ -97,12 +97,6 @@ def get_current_user(token: str = Depends(get_token_from_cookie), db: Session = 
 def get_user_or_raise_401(
     token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_db)
 ):
-    if is_token_blacklisted(token):
-        raise HTTPException(
-            status_code=401,
-            detail="You Are logged out, please log in again to proceed",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
     if is_restricted(from_token(session, token), session):
         raise HTTPException(status_code=401, detail="You are currently restricted to this service")
     try:
@@ -113,16 +107,6 @@ def get_user_or_raise_401(
     except JWTError:
         raise HTTPException(status_code=401, detail=str("Invalid token"))
 
-
-blacklisted_tokens: Set[str] = set()
-
-
-def blacklist_token(token: str):
-    blacklisted_tokens.add(token)
-
-
-def is_token_blacklisted(token: str) -> bool:
-    return token in blacklisted_tokens
 
 
 def get_token(token: str = Depends(oauth2_scheme)):
