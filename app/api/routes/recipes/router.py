@@ -22,6 +22,7 @@ def create_recipe(
     }]),
     db: Session = Depends(get_db)
 ):
+    recipe.category = recipe.category.capitalize()
     recipe = service.create(recipe, current_user, db)
     if recipe:
         return JSONResponse(status_code=status.HTTP_201_CREATED, content="New recipe created")
@@ -62,11 +63,3 @@ def search_recipes_endpoint(
         db=db
     )
     return results
-
-@recipe_router.get("/find_by_ID")
-def search_by_id(
-    ID: int = Query(None, description="Search by ID"),
-    db: Session = Depends(get_db)
-):
-    recipe = service.find_by_id(ID, db)
-    return recipe
