@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from fastapi import APIRouter, HTTPException, status, Depends, Body, Response
+from fastapi import APIRouter, HTTPException, status, Depends, Body, Response, Query
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -19,11 +19,11 @@ user_router = APIRouter(prefix="/users", tags=["Users"])
 
 @user_router.post("/register")
 async def register_user(
-    user: UserDTO = Body(..., example={
+    user: UserDTO = Body(..., examples=[{
         "username": "fansho",
         "password": "Password1!!",
         "email": "ivanaleksandrov98@gmail.com"
-    }),
+    }]),
     db: Session = Depends(get_db)
 ):
     created_user = service.create(user, db)
@@ -69,13 +69,13 @@ def update_user(
     current_user: UserViewDTO = Depends(get_current_user),
         update_info: UpdateUserDTO = Body(
             ...,
-            example={
+            examples=[{
                 "password": "Password1!",
                 "email": "default@example.com",
                 "photo_path": "photo.jpeg/photo_path",
                 "bio": "This is the bio",
 
-            },
+            }],
         ),
     db: Session = Depends(get_db),
 ):
@@ -85,3 +85,4 @@ def update_user(
         status_code=status.HTTP_200_OK,
         content={"message": "Profile updated successfully"
                  })
+
