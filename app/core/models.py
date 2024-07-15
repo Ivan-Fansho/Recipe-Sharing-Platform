@@ -1,15 +1,10 @@
-from dataclasses import dataclass
 from datetime import datetime, date
 
-from sqlalchemy.orm import declarative_base, relationship, sessionmaker, Mapped, mapped_column
-from sqlalchemy import (
-    String, Integer, Boolean, Text, ForeignKey, DateTime, create_engine, Column, Date
-)
-from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import declarative_base, relationship, Mapped, mapped_column
+from sqlalchemy import String, Integer, Boolean, Text, ForeignKey, DateTime, Column, Date
 
-Base = declarative_base( )
+Base = declarative_base()
 
-@dataclass
 class User(Base):
     __tablename__ = 'users'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -26,7 +21,6 @@ class User(Base):
     comments: Mapped[list['Comment']] = relationship("Comment", back_populates="user")
     favorites: Mapped[list['Favorite']] = relationship("Favorite", back_populates="user")
 
-@dataclass
 class Recipe(Base):
     __tablename__ = 'recipes'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -44,7 +38,6 @@ class Recipe(Base):
     comments: Mapped[list['Comment']] = relationship("Comment", back_populates="recipe")
     favorites: Mapped[list['Favorite']] = relationship("Favorite", back_populates="recipe")
 
-@dataclass
 class Rating(Base):
     __tablename__ = 'ratings'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -55,7 +48,6 @@ class Rating(Base):
     recipe: Mapped[Recipe] = relationship("Recipe", back_populates="ratings")
     user: Mapped[User] = relationship("User", back_populates="ratings")
 
-@dataclass
 class Comment(Base):
     __tablename__ = 'comments'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -67,7 +59,6 @@ class Comment(Base):
     recipe: Mapped[Recipe] = relationship("Recipe", back_populates="comments")
     user: Mapped[User] = relationship("User", back_populates="comments")
 
-@dataclass
 class Favorite(Base):
     __tablename__ = 'favorites'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -76,6 +67,7 @@ class Favorite(Base):
 
     user: Mapped[User] = relationship("User", back_populates="favorites")
     recipe: Mapped[Recipe] = relationship("Recipe", back_populates="favorites")
+
 
 """
 Users Table:
