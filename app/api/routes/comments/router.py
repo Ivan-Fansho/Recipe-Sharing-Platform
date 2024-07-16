@@ -18,3 +18,10 @@ def create_comment(current_user: UserViewDTO = Depends(get_current_user),
     service.create(current_user.id, comment, db)
 
     return JSONResponse(status_code=status.HTTP_201_CREATED, content={"message": "Comment created"})
+
+@comment_router.delete("/delete")
+def delete_comment(current_user: UserViewDTO = Depends(get_current_user),
+                   comment_id: int = Query(description="Comment ID"),
+                   db: Session = Depends(get_db)):
+    service.delete(current_user.id, comment_id, db)
+    return JSONResponse(status_code=200, content={"message": "Comment deleted"})

@@ -1,7 +1,7 @@
 from datetime import date
 
 from app.api.routes.comments.dtos import CreateCommentDTO
-from app.api.utils.custom_errors import RecipeNotFoundException
+from app.api.utils.custom_errors import RecipeNotFoundException, CommentNotFoundException, WrongUserException
 from app.core.models import Comment, Recipe
 import logging
 
@@ -21,3 +21,23 @@ def create(user_id: int, comment: CreateCommentDTO, db):
     except Exception as e:
         logger.error(e)
         raise e
+
+def delete( user_id: int, comment_id: int, db):
+    try:
+        comment = db.query(Comment).filter(Comment.id == comment_id).first()
+        if not comment:
+            raise CommentNotFoundException()
+        if comment.user_id != user_id:
+            raise WrongUserException()
+        db.delete(comment)
+        db.commit()
+    except CommentNotFoundException as e:
+        logger.error(e)
+        raise e
+    except WrongUserException as e:
+        logger.error(e)
+        raise e
+    except Exception as e:
+        logger.error(e)
+        raise e
+

@@ -6,7 +6,7 @@ from app.api.authentication.authentication_service import get_current_user
 from app.api.routes.recipes import service
 from app.api.routes.recipes.dtos import RecipeDTO, RecipeUpdateDTO
 from app.api.routes.users.dtos import UserViewDTO
-from app.api.utils.custom_errors import WrongUserException
+
 from app.core.db_dependency import get_db
 
 recipe_router = APIRouter(prefix="/recipes", tags=["Recipes"])
