@@ -29,7 +29,7 @@ def create(recipe: RecipeDTO, user: UserViewDTO, db: Session):
         raise e
     except Exception as e:
         logger.error(e)
-        raise HTTPException(status_code=404, detail="Recipe could not be created")
+        raise HTTPException(status_code=400, detail="Recipe could not be created")
 
 def update(recipe_id: int, update_info: RecipeUpdateDTO, user: UserViewDTO, db: Session):
     try:
