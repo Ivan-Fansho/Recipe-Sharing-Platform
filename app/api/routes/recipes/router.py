@@ -64,3 +64,9 @@ def search_recipes_endpoint(
         db=db
     )
     return results
+
+
+@recipe_router.get("/view_recipe")
+def view_recipe(id: int = Query(..., description="Recipe ID"), db: Session = Depends(get_db)):
+    recipe = service.view(id, db)
+    return recipe
