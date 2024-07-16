@@ -6,6 +6,7 @@ from app.api.authentication.authentication_service import get_current_user
 from app.api.routes.recipes import service
 from app.api.routes.recipes.dtos import RecipeDTO, RecipeUpdateDTO
 from app.api.routes.users.dtos import UserViewDTO
+
 from app.core.db_dependency import get_db
 
 recipe_router = APIRouter(prefix="/recipes", tags=["Recipes"])
@@ -15,8 +16,8 @@ def create_recipe(
     current_user: UserViewDTO = Depends(get_current_user),
     recipe: RecipeDTO = Body(..., examples=[{
         "title": "Peperoni Pizza",
-        "ingredients": "Dough, tomato sauce, mozzarella, pepperoni",
-        "steps": "1. Stretch the dough 2. Put on the tomato sauce 3. Spread the mozzarella 4. Put on the pepperoni",
+        "ingredients": "Dough, tomato sauce, mozzarella, peperoni",
+        "steps": "1. Stretch the dough 2. Put on the tomato sauce 3. Spread the mozzarella 4. Put on the peperoni",
         "category": "pizzas",
         "photo": "photo.jpeg/photo_path",
     }]),
@@ -63,3 +64,9 @@ def search_recipes_endpoint(
         db=db
     )
     return results
+
+
+@recipe_router.get("/view_recipe")
+def view_recipe(id: int = Query(..., description="Recipe ID"), db: Session = Depends(get_db)):
+    recipe = service.view(id, db)
+    return recipe

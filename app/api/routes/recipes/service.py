@@ -3,11 +3,12 @@ from fastapi import HTTPException
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
-from app.api.routes.recipes.dtos import RecipeDTO, RecipeUpdateDTO
+from app.api.routes.comments.dtos import CommentShowDTO
+from app.api.routes.recipes.dtos import RecipeDTO, RecipeUpdateDTO, RecipeShowDTO
 from app.api.routes.users.dtos import UserViewDTO
 from app.api.utils.categories import categories
 from app.api.utils.custom_errors import WrongCategoryException, WrongUserException, RecipeNotFoundException
-from app.core.models import Recipe
+from app.core.models import Recipe, User
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +30,7 @@ def create(recipe: RecipeDTO, user: UserViewDTO, db: Session):
         raise e
     except Exception as e:
         logger.error(e)
-        raise HTTPException(status_code=404, detail="Recipe could not be created")
+        raise HTTPException(status_code=400, detail="Recipe could not be created")
 
 def update(recipe_id: int, update_info: RecipeUpdateDTO, user: UserViewDTO, db: Session):
     try:
@@ -102,4 +103,31 @@ def search_recipes(title: str, category: str, username: str, sort_by: str, page:
         logger.error(e)
         raise HTTPException(status_code=404, detail="Error occurred while searching for recipes")
 
+def get_username_by_id(user_id: int, db: Session):
+    user = db.query(User).filter_by(id=user_id).first()
+    return user.username
 
+def map_recipe_to_dto(recipe, db: Session):
+    return RecipeShowDTO(
+        title=recipe.title,
+        category=recipe.category,
+        ingredients=recipe.ingredients,
+        steps=recipe.steps,
+        photo=recipe.photo,
+        created_at=recipe.created_at,
+        comments=[CommentShowDTO(
+            username=get_username_by_id(comment.user_id, db),
+            created_at=comment.created_at,
+            comment=comment.comment
+        ) for comment in recipe.comments]
+    )
+
+def view(id, db):
+    try:
+        db_recipe = db.query(Recipe).filter_by(id=id).first()
+        if not db_recipe:
+            raise RecipeNotFoundException()
+        return map_recipe_to_dto(db_recipe, db)
+    except RecipeNotFoundException as e:
+        logger.error(e)
+        raise e
