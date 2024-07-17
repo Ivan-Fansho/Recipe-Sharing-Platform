@@ -10,6 +10,7 @@ from api.routes.users.router import user_router
 from api.routes.recipes.router import recipe_router
 from api.routes.comments.router import comment_router
 from api.routes.ratings.router import ratings_router
+from api.routes.favorites.router import favorites_router
 from app.core.models import Base
 
 
@@ -32,6 +33,7 @@ app.include_router(user_router)
 app.include_router(recipe_router)
 app.include_router(comment_router)
 app.include_router(ratings_router)
+app.include_router(favorites_router)
 
 # Create all tables
 models.Base.metadata.create_all(bind=engine)

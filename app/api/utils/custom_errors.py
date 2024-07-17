@@ -30,3 +30,10 @@ class WrongSortInputException(CustomHTTPException):
     def __init__(self, detail: str = "you can only choose one of the available sorts: 'asc', 'desc'"):
         super().__init__(status_code=400, detail=detail)
 
+class FavoriteAlreadyExistsException(CustomHTTPException):
+    def __init__(self, detail: str = "you have already have this recipe in your favorites list"):
+        super().__init__(status_code=400, detail=detail)
+
+class FavoriteDoesntExistsException(CustomHTTPException):
+    def __init__(self, detail: str = "you have dont have this recipe in your favorites"):
+        super().__init__(status_code=400, detail=detail)
