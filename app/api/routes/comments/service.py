@@ -1,5 +1,3 @@
-from datetime import date
-
 from app.api.routes.comments.dtos import CreateCommentDTO
 from app.api.utils.custom_errors import RecipeNotFoundException, CommentNotFoundException, WrongUserException
 from app.core.models import Comment, Recipe

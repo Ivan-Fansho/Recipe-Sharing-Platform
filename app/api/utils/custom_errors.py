@@ -21,3 +21,7 @@ class RecipeNotFoundException(CustomHTTPException):
 class CommentNotFoundException(CustomHTTPException):
     def __init__(self, detail: str = "Comment you are trying to access was not found"):
         super().__init__(status_code=404, detail=detail)
+
+class RatingAlreadyExistsException(CustomHTTPException):
+    def __init__(self, detail: str = "you have already given a rating to this recipe"):
+        super().__init__(status_code=400, detail=detail)

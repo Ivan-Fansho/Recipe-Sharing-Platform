@@ -9,6 +9,7 @@ from app.core.db_population import initialize_special_accounts
 from api.routes.users.router import user_router
 from api.routes.recipes.router import recipe_router
 from api.routes.comments.router import comment_router
+from api.routes.ratings.router import ratings_router
 from app.core.models import Base
 
 
@@ -30,6 +31,7 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(user_router)
 app.include_router(recipe_router)
 app.include_router(comment_router)
+app.include_router(ratings_router)
 
 # Create all tables
 models.Base.metadata.create_all(bind=engine)
