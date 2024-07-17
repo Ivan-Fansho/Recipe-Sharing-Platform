@@ -49,7 +49,7 @@ def search_recipes_endpoint(
     title: str = Query(None, description="Search by title"),
     category: str = Query(None, description="Search by category"),
     username: str = Query(None, description="Search by username"),
-    sort_by: str = Query(None, description="Sort by 'date' or 'ratings'"),
+    sort_by: str = Query(None, description="Sort by date 'asc' or 'desc'"),
     page: int = Query(1, description="Page number for pagination", ge=1),
     page_size: int = Query(10, description="Number of results per page", ge=1),
     db: Session = Depends(get_db)

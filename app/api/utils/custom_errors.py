@@ -21,3 +21,19 @@ class RecipeNotFoundException(CustomHTTPException):
 class CommentNotFoundException(CustomHTTPException):
     def __init__(self, detail: str = "Comment you are trying to access was not found"):
         super().__init__(status_code=404, detail=detail)
+
+class RatingAlreadyExistsException(CustomHTTPException):
+    def __init__(self, detail: str = "you have already given a rating to this recipe"):
+        super().__init__(status_code=400, detail=detail)
+
+class WrongSortInputException(CustomHTTPException):
+    def __init__(self, detail: str = "you can only choose one of the available sorts: 'asc', 'desc'"):
+        super().__init__(status_code=400, detail=detail)
+
+class FavoriteAlreadyExistsException(CustomHTTPException):
+    def __init__(self, detail: str = "you have already have this recipe in your favorites list"):
+        super().__init__(status_code=400, detail=detail)
+
+class FavoriteDoesntExistsException(CustomHTTPException):
+    def __init__(self, detail: str = "you have dont have this recipe in your favorites"):
+        super().__init__(status_code=400, detail=detail)

@@ -1,14 +1,15 @@
 import logging
 from fastapi import HTTPException
-from sqlalchemy import desc
+from sqlalchemy import desc, asc
 from sqlalchemy.orm import Session
 
 from app.api.routes.comments.dtos import CommentShowDTO
-from app.api.routes.recipes.dtos import RecipeDTO, RecipeUpdateDTO, RecipeShowDTO
+from app.api.routes.recipes.dtos import RecipeDTO, RecipeUpdateDTO, RecipeShowDTO, RecipeSearchDTO
 from app.api.routes.users.dtos import UserViewDTO
 from app.api.utils.categories import categories
-from app.api.utils.custom_errors import WrongCategoryException, WrongUserException, RecipeNotFoundException
-from app.core.models import Recipe, User
+from app.api.utils.custom_errors import WrongCategoryException, WrongUserException, RecipeNotFoundException, \
+    WrongSortInputException
+from app.core.models import Recipe, User, Rating
 
 logger = logging.getLogger(__name__)
 
@@ -81,14 +82,20 @@ def search_recipes(title: str, category: str, username: str, sort_by: str, page:
         if username:
             query = query.filter(Recipe.username.ilike(f"%{username}%"))
 
-        if sort_by == "date":
+        if sort_by:
+            if sort_by not in {"asc", "desc"}:
+                raise WrongSortInputException()
+        if sort_by == "desc":
             query = query.order_by(desc(Recipe.created_at))
-        # Uncomment if you have a ratings field
-        # elif sort_by == "ratings":
-        #     query = query.order_by(desc(Recipe.ratings))
+        elif sort_by == "asc":
+            query = query.order_by(asc(Recipe.created_at))
 
         total_results = query.count()
         results = query.offset((page - 1) * page_size).limit(page_size).all()
+
+        results = [RecipeSearchDTO(title=recipe.title, username=recipe.username,
+                                   category=recipe.category, ingredients=recipe.ingredients, steps=recipe.steps,
+                                   photo=recipe.photo, avg_rating=get_avg_rating(recipe.id, db), created_at=recipe.created_at) for recipe in results]
 
         return {
             "total": total_results,
@@ -99,6 +106,9 @@ def search_recipes(title: str, category: str, username: str, sort_by: str, page:
     except WrongCategoryException as e:
         logger.error(e)
         raise e
+    except WrongSortInputException as e:
+        logger.error(e)
+        raise e
     except Exception as e:
         logger.error(e)
         raise HTTPException(status_code=404, detail="Error occurred while searching for recipes")
@@ -107,13 +117,24 @@ def get_username_by_id(user_id: int, db: Session):
     user = db.query(User).filter_by(id=user_id).first()
     return user.username
 
+def get_avg_rating(recipe_id, db: Session):
+    avg_rating = []
+    ratings = db.query(Rating).filter_by(recipe_id=recipe_id).all()
+    for rating in ratings:
+        avg_rating.append(rating.rating)
+    if len(avg_rating) == 0:
+        return 0
+    avg_rating = sum(avg_rating) / len(avg_rating)
+    return f"{avg_rating:.2f}"
 def map_recipe_to_dto(recipe, db: Session):
     return RecipeShowDTO(
         title=recipe.title,
+        username=recipe.username,
         category=recipe.category,
         ingredients=recipe.ingredients,
         steps=recipe.steps,
         photo=recipe.photo,
+        avg_rating=get_avg_rating(recipe.id, db),
         created_at=recipe.created_at,
         comments=[CommentShowDTO(
             username=get_username_by_id(comment.user_id, db),
