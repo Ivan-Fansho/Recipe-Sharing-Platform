@@ -22,10 +22,22 @@ class RecipeUpdateDTO(BaseModel):
 
 class RecipeShowDTO(BaseModel):
     title: str
+    username: str
     category: str
     ingredients: str
     steps: str
     photo: str
+    avg_rating: float
     created_at: datetime
     comments: list[CommentShowDTO]
-    # avg_rating: float
+
+
+class RecipeSearchDTO(BaseModel):
+    title: str
+    username: str
+    category: str
+    ingredients: str
+    steps: str
+    photo: str
+    avg_rating: float
+    created_at: datetime
