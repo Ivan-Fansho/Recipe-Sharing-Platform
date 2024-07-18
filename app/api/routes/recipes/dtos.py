@@ -33,6 +33,7 @@ class RecipeShowDTO(BaseModel):
 
 
 class RecipeSearchDTO(BaseModel):
+    id: int
     title: str
     username: str
     category: str

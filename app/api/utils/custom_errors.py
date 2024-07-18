@@ -18,6 +18,10 @@ class RecipeNotFoundException(CustomHTTPException):
     def __init__(self, detail: str = "Recipe you are trying to access was not found"):
         super().__init__(status_code=404, detail=detail)
 
+class UserNotFoundException(CustomHTTPException):
+    def __init__(self, detail: str = "User you are trying to access was not found"):
+        super().__init__(status_code=404, detail=detail)
+
 class CommentNotFoundException(CustomHTTPException):
     def __init__(self, detail: str = "Comment you are trying to access was not found"):
         super().__init__(status_code=404, detail=detail)
@@ -36,4 +40,32 @@ class FavoriteAlreadyExistsException(CustomHTTPException):
 
 class FavoriteDoesntExistsException(CustomHTTPException):
     def __init__(self, detail: str = "you have dont have this recipe in your favorites"):
+        super().__init__(status_code=404, detail=detail)
+
+class BlockedUserException(CustomHTTPException):
+    def __init__(self, detail: str = "You dont have access to this function"):
+        super().__init__(status_code=403, detail=detail)
+
+class NotAdminUserException(CustomHTTPException):
+    def __init__(self, detail: str = "This is Admin only function"):
+        super().__init__(status_code=403, detail=detail)
+
+class InvalidRestrictionInputException(CustomHTTPException):
+    def __init__(self, detail: str = "You can only input 'Yes' or 'No'"):
+        super().__init__(status_code=400, detail=detail)
+
+class UserAlreadyBlockedException(CustomHTTPException):
+    def __init__(self, detail: str = "you have already blocked this user"):
+        super().__init__(status_code=400, detail=detail)
+
+class UserAlreadyUnblockedException(CustomHTTPException):
+    def __init__(self, detail: str = "User is already unblocked"):
+        super().__init__(status_code=400, detail=detail)
+
+class InvalidRestrictionInputExceptionv2(CustomHTTPException):
+    def __init__(self, detail: str = "You can only input 'block' or 'unblock'"):
+        super().__init__(status_code=400, detail=detail)
+
+class ProfanityFoundException(CustomHTTPException):
+    def __init__(self, detail: str = "You cannot post any profanity"):
         super().__init__(status_code=400, detail=detail)

@@ -72,3 +72,9 @@ class UpdateUserDTO(BaseModel):
 
 
 
+class ShowUserDTO(BaseModel):
+    id: int
+    username: str
+    email: str
+    bio: str | None = None
+    profile_pic: str | None = None
