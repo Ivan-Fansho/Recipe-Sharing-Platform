@@ -8,6 +8,7 @@ from app.api.authentication.authentication_service import ACCESS_TOKEN_EXPIRE_MI
     authenticate_user, get_current_user
 from app.api.routes.users import service
 from app.api.routes.users.dtos import UserViewDTO, UserDTO, UpdateUserDTO
+from app.api.utils.check_if_restricted import check_if_user_is_restricted
 
 from app.core.db_dependency import get_db
 
@@ -55,8 +56,10 @@ def login(
     return {"message": "Login successful"}
 
 @user_router.get("/me")
-def read_users_me(current_user: UserViewDTO = Depends(get_current_user)):
-    return current_user
+def read_users_me(current_user: UserViewDTO = Depends(get_current_user), db: Session = Depends(get_db)):
+    check_if_user_is_restricted(current_user.id, db)
+
+    return service.get_current_user(current_user.id, db)
 
 @user_router.post("/logout")
 def logout(response: Response):
@@ -79,6 +82,7 @@ def update_user(
         ),
     db: Session = Depends(get_db),
 ):
+    check_if_user_is_restricted(current_user.id, db)
     user = service.update_user(current_user.id, update_info, db)
 
     return JSONResponse(
