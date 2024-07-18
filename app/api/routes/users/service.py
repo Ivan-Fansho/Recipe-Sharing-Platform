@@ -2,7 +2,7 @@ import logging
 from sqlalchemy.orm import Session
 from app.core.db_dependency import get_db
 from app.core.models import User
-from .dtos import UserDTO, UpdateUserDTO
+from .dtos import UserDTO, UpdateUserDTO, ShowUserDTO
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, Depends
 from ...utils import custom_emails
@@ -92,3 +92,8 @@ def update_user(id, update_info: UpdateUserDTO, db: Session = Depends(get_db)):
                 status_code=400, detail="Could not complete update"
             ) from e
 
+def get_current_user(user_id, db: Session):
+    user = db.query(User).filter_by(id=user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return ShowUserDTO(id=user.id,username=user.username, email=user.email, bio=user.bio, profile_pic=user.profile_picture)

@@ -6,6 +6,7 @@ from app.api.authentication.authentication_service import get_current_user
 from app.api.routes.recipes import service
 from app.api.routes.recipes.dtos import RecipeDTO, RecipeUpdateDTO
 from app.api.routes.users.dtos import UserViewDTO
+from app.api.utils.check_if_restricted import check_if_user_is_restricted
 
 from app.core.db_dependency import get_db
 
@@ -23,12 +24,13 @@ def create_recipe(
     }]),
     db: Session = Depends(get_db)
 ):
+    check_if_user_is_restricted(current_user.id, db)
     recipe.category = recipe.category.capitalize()
     recipe = service.create(recipe, current_user, db)
     if recipe:
         return JSONResponse(status_code=status.HTTP_201_CREATED, content="New recipe created")
 
-@recipe_router.post("/update")
+@recipe_router.put("/update")
 def update_recipe(
     current_user: UserViewDTO = Depends(get_current_user),
     recipe_id: int = Query(description="Recipe ID"),
@@ -41,6 +43,7 @@ def update_recipe(
     }]),
     db: Session = Depends(get_db)
 ):
+    check_if_user_is_restricted(current_user.id, db)
     service.update(recipe_id, recipe, current_user, db)
     return JSONResponse(status_code=status.HTTP_201_CREATED, content="Recipe updated")
 

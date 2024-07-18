@@ -2,13 +2,13 @@ import logging
 from fastapi import HTTPException
 from sqlalchemy import desc, asc
 from sqlalchemy.orm import Session
-
 from app.api.routes.comments.dtos import CommentShowDTO
 from app.api.routes.recipes.dtos import RecipeDTO, RecipeUpdateDTO, RecipeShowDTO, RecipeSearchDTO
 from app.api.routes.users.dtos import UserViewDTO
 from app.api.utils.categories import categories
 from app.api.utils.custom_errors import WrongCategoryException, WrongUserException, RecipeNotFoundException, \
-    WrongSortInputException
+    WrongSortInputException, ProfanityFoundException
+from app.api.utils.profanity_check import check_for_profanity
 from app.core.models import Recipe, User, Rating
 
 logger = logging.getLogger(__name__)
@@ -17,6 +17,9 @@ def create(recipe: RecipeDTO, user: UserViewDTO, db: Session):
     try:
         if recipe.category not in categories:
             raise WrongCategoryException()
+        if check_for_profanity(recipe.title) or check_for_profanity(recipe.ingredients) or check_for_profanity(recipe.steps):
+            raise ProfanityFoundException()
+
 
         new_recipe = Recipe(username=user.username, title=recipe.title,
                             ingredients=recipe.ingredients, steps=recipe.steps,
@@ -27,6 +30,9 @@ def create(recipe: RecipeDTO, user: UserViewDTO, db: Session):
         db.refresh(new_recipe)
         return new_recipe
     except WrongCategoryException as e:
+        logger.error(e)
+        raise e
+    except ProfanityFoundException as e:
         logger.error(e)
         raise e
     except Exception as e:
@@ -42,10 +48,16 @@ def update(recipe_id: int, update_info: RecipeUpdateDTO, user: UserViewDTO, db: 
             raise WrongUserException()
 
         if update_info.title:
+            if check_for_profanity(update_info.title):
+                raise ProfanityFoundException( )
             recipe.title = update_info.title
         if update_info.ingredients:
+            if check_for_profanity(update_info.ingredients):
+                raise ProfanityFoundException( )
             recipe.ingredients = update_info.ingredients
         if update_info.steps:
+            if check_for_profanity(update_info.steps):
+                raise ProfanityFoundException( )
             recipe.steps = update_info.steps
         if update_info.category:
             if update_info.category.capitalize() not in categories:
@@ -63,6 +75,9 @@ def update(recipe_id: int, update_info: RecipeUpdateDTO, user: UserViewDTO, db: 
         logger.error(e)
         raise e
     except WrongUserException as e:
+        logger.error(e)
+        raise e
+    except ProfanityFoundException as e:
         logger.error(e)
         raise e
     except Exception as e:
@@ -93,7 +108,7 @@ def search_recipes(title: str, category: str, username: str, sort_by: str, page:
         total_results = query.count()
         results = query.offset((page - 1) * page_size).limit(page_size).all()
 
-        results = [RecipeSearchDTO(title=recipe.title, username=recipe.username,
+        results = [RecipeSearchDTO(id=recipe.id, title=recipe.title, username=recipe.username,
                                    category=recipe.category, ingredients=recipe.ingredients, steps=recipe.steps,
                                    photo=recipe.photo, avg_rating=get_avg_rating(recipe.id, db), created_at=recipe.created_at) for recipe in results]
 
