@@ -37,6 +37,25 @@ def restrict(current_user: UserViewDTO = Depends(get_current_user),
 
     return JSONResponse(status_code=200, content={"message": f"User: {result} was {restriction}ed"})
 
-@admin_router.get("/recipes/")
-def get_recipes(current_user: UserViewDTO = Depends(get_current_user),):
-    pass
+@admin_router.get("/comments")
+def get_comments(current_user: UserViewDTO = Depends(get_current_user),
+                 user_id: int = Query(None, description="User id"),
+                 recipe_id: int = Query(None, description="Recipe id"),
+                 page: int = Query(1, description="Page number for pagination", ge=1),
+                 page_size: int = Query(10, description="Number of results per page", ge=1),
+                 db: Session = Depends(get_db)):
+    check_if_user_is_admin(current_user.id, db)
+
+    comments = service.view_comments(user_id, recipe_id, page, page_size, db)
+
+    return comments
+
+@admin_router.delete("/comments")
+def delete_comments(current_user: UserViewDTO = Depends(get_current_user),
+                    comment_id: int = Query(None, description="Comment id"),
+                    db: Session = Depends(get_db)):
+    check_if_user_is_admin(current_user.id, db)
+
+    comment = service.comment_delete(comment_id, db)
+
+    return JSONResponse(status_code=200, content={"message": f"Comment: {comment} was deleted"})

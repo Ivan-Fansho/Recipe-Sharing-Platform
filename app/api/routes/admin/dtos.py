@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -8,3 +10,11 @@ class UserAdminViewDTO(BaseModel):
     profile_picture: str | None = None
     bio: str | None = None
     is_restricted: bool
+
+
+class CommentAdminShowDTO(BaseModel):
+    comment_id: int
+    username: str
+    recipe_id: int
+    created_at: datetime
+    comment: str
