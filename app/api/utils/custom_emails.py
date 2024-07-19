@@ -8,7 +8,7 @@ def registration_email_sender(user):
             {
                 "From": {
                     "Email": "kis.team.telerik@gmail.com",
-                    "Name": "OnlyPans"
+                    "Name": "Recipe Sharing App"
                 },
                 "To": [
                     {
@@ -17,7 +17,7 @@ def registration_email_sender(user):
                     }
                 ],
                 "Subject": f"Registration to OnlyPans",
-                "HTMLPart": f"<h3>Thanks for registering, please wait for your registration to be confirmed.</h3><br />May the delivery force be with you!",
+                "HTMLPart": f"<h3>Thanks for registering to the Recipe sharing app.</h3><br />May the delivery force be with you!",
                 "CustomID": f"UserID: {user.id}"
             }
         ]
@@ -33,7 +33,7 @@ def update_password_email_sender(user, password, email):
             {
                 "From": {
                     "Email": "kis.team.telerik@gmail.com",
-                    "Name": "OnlyPans"
+                    "Name": "Recipe Sharing App"
                 },
                 "To": [
                     {
@@ -59,7 +59,7 @@ def registration_email_sender_to_admin(user):
             {
                 "From": {
                     "Email": "kis.team.telerik@gmail.com",
-                    "Name": "MyPyWallet Admin"
+                    "Name": "Recipe Sharing App"
                 },
                 "To": [
                     {
@@ -68,7 +68,7 @@ def registration_email_sender_to_admin(user):
                     }
                 ],
                 "Subject": f"New Registration UserID:{user.id}",
-                "HTMLPart": f"<h3>New user {user.username} with id:{user.id} waits for confirmation</h3><br />May the delivery force be with you!",
+                "HTMLPart": f"<h3>New user {user.username} with id:{user.id} registered to the app</h3><br />May the delivery force be with you!",
                 "CustomID": "AppGettingStartedTest"
             }
         ]
