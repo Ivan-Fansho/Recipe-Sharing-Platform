@@ -1,17 +1,17 @@
 import uvicorn
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-
+from app.api.routes.admin.router import admin_router
+from app.api.routes.comments.router import comment_router
+from app.api.routes.favorites.router import favorites_router
+from app.api.routes.ratings.router import ratings_router
+from app.api.routes.recipes.router import recipe_router
+from app.api.routes.users.router import user_router
 from app.core import models
 from app.core.database import engine
 from app.core.db_dependency import get_db
 from app.core.db_population import initialize_special_accounts
-from api.routes.users.router import user_router
-from api.routes.recipes.router import recipe_router
-from api.routes.comments.router import comment_router
-from api.routes.ratings.router import ratings_router
-from api.routes.favorites.router import favorites_router
-from api.routes.admin.router import admin_router
+
 from app.core.models import Base
 
 
