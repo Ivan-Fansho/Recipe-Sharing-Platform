@@ -21,9 +21,9 @@ user_router = APIRouter(prefix="/users", tags=["Users"])
 @user_router.post("/register")
 async def register_user(
     user: UserDTO = Body(..., examples=[{
-        "username": "fansho",
+        "username": "your_username",
         "password": "Password1!!",
-        "email": "ivanaleksandrov98@gmail.com"
+        "email": "someExampleEmail.com"
     }]),
     db: Session = Depends(get_db)
 ):
