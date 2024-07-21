@@ -16,7 +16,7 @@ def registration_email_sender(user):
                         "Name": f"{user.username}"
                     }
                 ],
-                "Subject": f"Registration to OnlyPans",
+                "Subject": f"Registration to Recipe Sharing App",
                 "HTMLPart": f"<h3>Thanks for registering to the Recipe sharing app.</h3><br />May the delivery force be with you!",
                 "CustomID": f"UserID: {user.id}"
             }
