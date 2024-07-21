@@ -23,7 +23,7 @@ async def register_user(
     user: UserDTO = Body(..., examples=[{
         "username": "your_username",
         "password": "Password1!!",
-        "email": "someExampleEmail.com"
+        "email": "default@example.com"
     }]),
     db: Session = Depends(get_db)
 ):
@@ -49,7 +49,7 @@ def login(
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=True,  # Use True in production to ensure cookies are only sent over HTTPS
+        secure=False,  # Use True in production to ensure cookies are only sent over HTTPS
         samesite="lax"  # Adjust as needed for your use case
     )
 
