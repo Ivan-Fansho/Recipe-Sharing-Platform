@@ -7,6 +7,7 @@ from app.api.routes.favorites.router import favorites_router
 from app.api.routes.ratings.router import ratings_router
 from app.api.routes.recipes.router import recipe_router
 from app.api.routes.users.router import user_router
+from app.api.routes.home.router import home_router
 from app.core import models
 from app.core.database import engine
 from app.core.db_dependency import get_db
@@ -36,6 +37,7 @@ app.include_router(comment_router)
 app.include_router(ratings_router)
 app.include_router(favorites_router)
 app.include_router(admin_router)
+app.include_router(home_router)
 
 # Create all tables
 models.Base.metadata.create_all(bind=engine)
