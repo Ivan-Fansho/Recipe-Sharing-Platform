@@ -22,6 +22,8 @@ The Recipe Sharing Platform is a web application designed to allow users to shar
 
 - **Custom Errors and Error Handling:** Implement custom error messages and robust error handling mechanisms. Use of logger to track, record, and manage errors effectively, ensuring comprehensive visibility into application issues.
 
+# You can test the app here: http://4.207.118.40/docs#/
+
 ## 1. Register User
 
 Registers a new user with the system.
